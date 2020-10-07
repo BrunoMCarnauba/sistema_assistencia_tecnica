@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      template="/templates/templatePrincipal.xhtml"> 
+
+	<ui:define name="corpo">
+		<div>
+			<h1 style="text-align: center; color: #003955; padding: 15px; background-color: #cee2ed; border: solid; margin: 0px 0px 15px 0px;">Bem-vindo ao sistema de assistência técnica</h1>
+			<p:contentFlow value="#{homeController.images}" var="image">
+			    <p:graphicImage library="images" name="/home/#{image}" styleClass="content" alt="ASd"/>
+			    <div class="caption">#{image}</div>
+			</p:contentFlow>
+		</div>
+	</ui:define>
+
+</ui:decorate>

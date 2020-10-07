@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Tutorial: https://youtu.be/SG3wYAxKTVo?list=PL_GwGUsBlNycg0Ath1oYKCEPmaBkcehBD --> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+	
+	<style>
+		.ui-menuitem-icon{
+			margin-right: 5px !important;
+		}
+	</style>
+	
+	<h:form id="formMenu">
+		<p:menubar autoDisplay="false">
+			<p:submenu label="Cadastros" icon="pi pi-folder-open">
+				<p:submenu label="Usuário" icon="pi pi-users">
+					<p:menuitem value="Cadastrar" url="UsuarioCadastrar.xhtml" />
+					<p:menuitem value="Listar" url="UsuarioListar.xhtml" />
+				</p:submenu>
+				
+				<p:menuitem icon="pi pi-users" value="Clientes" url="Cliente.xhtml" />
+	
+				<p:separator />
+				
+				<p:menuitem icon="pi pi-briefcase" value="Fabricantes" url="Fabricante.xhtml" />
+	
+				<p:submenu label="Peças" icon="pi pi-cog">
+					<p:menuitem value="Peças" url="Pecas.xhtml" />
+					<p:menuitem value="Tipos de peças" url="TiposPecas.xhtml" />
+				</p:submenu>
+			</p:submenu>
+			
+			<p:menuitem icon="pi pi-file" value="Ordens de serviço" url="OrdemServico.xhtml" />
+	
+			<p:submenu label="Ajuda" icon="pi pi-question-circle">
+				<p:menuitem icon="pi pi-question" value="Como usar" url="#" />
+				<p:menuitem icon="pi pi-info" value="Sobre" url="#" />
+			</p:submenu>
+	
+			<f:facet name="options">
+				<p:commandButton value="Logout" icon="pi pi-sign-out" action="#{loginController.logout()}" />
+			</f:facet>
+		</p:menubar>
+	</h:form>
+
+</ui:composition>

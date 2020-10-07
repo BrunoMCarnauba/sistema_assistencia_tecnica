@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Tutorial tela de cadastro: https://youtu.be/XkRJvCpjal0?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z e https://youtu.be/iHwaZU2YSbo?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z -->
+<!-- Tutorial tela de listagem: https://youtu.be/6SnOqwWwMQo?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z e https://youtu.be/Q-zSiiulN-g?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z-->
+<!-- Tutorial sobre excluir: https://youtu.be/r8PBIyVsaLc?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z -->
+<!-- Tutorial sobre editar: https://youtu.be/oCyd_V3VXuQ?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z -->
+<!-- Tutorial - Como fazer o SelectOneMenu: https://www.youtube.com/watch?v=3XGwUTPJ9x8 e https://www.youtube.com/watch?v=_sNP0RyPMtg -->
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      template="/templates/templatePrincipal.xhtml"> 
+
+	<ui:define name="corpo">
+		<h:form id="formOrdensServicos">
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="Lista de ordens de serviço" />
+					<p:commandButton value="Adicionar ordem de serviço" actionListener="#{ordemServicoController.novaOS()}" oncomplete="PF('dialogoCadastro').show();" update=":formCadastro:painelCadastro" style="float: right;" />
+				</f:facet>
+			
+				<p:dataTable id="listaOrdensServicos" value="#{ordemServicoController.listarOrdensServicos()}" var="ordemServico" emptyMessage="Nenhum cadastro encontrado."
+							paginator="true" rows="10" style="margin: 5px 0 5px 0" widgetVar="OSTable">
+
+        			<p:column headerText="Data de registro" sortBy="#{ordemServico.dataRegistro}">
+        				<h:outputText value="#{ordemServico.dataRegistro}" />
+        			</p:column>
+					
+        			<p:column headerText="Status" filterBy="#{ordemServico.status}">
+        				<h:outputText value="#{ordemServico.status}" />
+        			</p:column>
+						
+					<p:column headerText="Cliente" filterBy="#{ordemServico.cliente.nome}" sortBy="#{ordemServico.cliente.nome}">
+						<h:outputText value="#{ordemServico.cliente.nome}" />
+					</p:column>
+					
+					<p:column headerText="Descrição do problema">
+						<h:outputText value="#{ordemServico.descricaoProblema}" />
+					</p:column>
+					
+					<p:column headerText="Opções">
+						<p:commandButton icon="pi pi-refresh" actionListener="#{ordemServicoController.btnAtualizar}" update=":formAtualizarOS:painelAtualizarOS" oncomplete="PF('dialogoAtualizarOS').show();">
+							<f:attribute name="ordemServicoSelecionada" value="#{ordemServico}" />
+						</p:commandButton>
+						<p:commandButton icon="pi pi-pencil" actionListener="#{ordemServicoController.btnEditar}" update=":formCadastro:painelCadastro" oncomplete="PF('dialogoCadastro').show();">
+							<f:attribute name="ordemServicoSelecionada" value="#{ordemServico}" />
+						</p:commandButton>
+						<p:commandButton icon="pi pi-trash" actionListener="#{ordemServicoController.deletarOrdemServico}" update=":formOrdensServicos:listaOrdensServicos">
+							<p:confirm header="Confirmação" message="Deseja mesmo deletar essa ordem de serviço?" icon="pi pi-exclamation-triangle"/>
+							<f:attribute name="ordemServicoSelecionada" value="#{ordemServico}" />
+						</p:commandButton>
+						<p:commandButton icon="pi pi-dollar" actionListener="#{ordemServicoController.efetuarPagamento}">
+							<f:attribute name="ordemServicoSelecionada" value="#{ordemServico}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton icon="pi pi-check" value="Sim" type="button" styleClass="ui-confirmdialog-yes" />
+				<p:commandButton icon="pi pi-times" value="Não" type="button" styleClass="ui-confirmdialog-no" />
+			</p:confirmDialog>
+			
+			<p:messages id="msgErro" severity="error" closable="false" showDetail="true">
+				<p:autoUpdate />
+			</p:messages>
+			
+		</h:form>
+		
+		<p:dialog header="Ordem de serviço - Cadastro"  widgetVar="dialogoCadastro" resizable="false" draggable="false" modal="true" style="text-align: center;">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painelCadastro" columns="2" cellpadding="5" style="text-align: left;">
+					<p:outputLabel for="usuario" value="Usuario:" />
+					<p:selectOneMenu id="usuario" value="#{ordemServicoController.ordemServico.usuario.id}" converter="omnifaces.SelectItemsConverter" filter="true" filterMatchMode="startsWith" style="width:276px">
+						<f:selectItem itemLabel="Selecione o usuário" noSelectionOption="true" />
+						<f:selectItems value="#{ordemServicoController.listarUsuarios()}" var="usuario" itemLabel="#{usuario.nome}" itemValue="#{usuario.id}" />
+					</p:selectOneMenu>
+				
+					<p:outputLabel for="cliente" value="Cliente:" />
+					<p:selectOneMenu id="cliente" value="#{ordemServicoController.ordemServico.cliente.id}" converter="omnifaces.SelectItemsConverter" filter="true" filterMatchMode="startsWith" style="width:276px" required="true" requiredMessage="Selecione um cliente">
+						<f:selectItem itemLabel="Selecione o cliente" noSelectionOption="true" />
+						<f:selectItems value="#{ordemServicoController.listarClientes()}" var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente.id}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="status" value="Status:" />
+					<p:selectOneMenu id="status" value="#{ordemServicoController.ordemServico.status}" style="width:276px">
+						<f:selectItem itemLabel="Ativo" itemValue="Ativo" />
+						<f:selectItem itemLabel="Concluído" itemValue="Concluído" />
+						<f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="descricao_problema" value="Descrição do problema:" />
+					<p:inputTextarea id="descricao_problema" value="#{ordemServicoController.ordemServico.descricaoProblema}" cols="30" autoResize="false" required="true" requiredMessage="Preencha o campo de descrição do problema" />
+				</h:panelGrid>
+				
+				<p:commandButton value="Salvar ordem de serviço" actionListener="#{ordemServicoController.btnSalvar()}" update="formOrdensServicos:listaOrdensServicos" />
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Ordem de serviço - Atualizar"  widgetVar="dialogoAtualizarOS" resizable="false" draggable="false" modal="true" style="text-align: center;">
+			<h:form id="formAtualizarOS">
+				<h:panelGrid id="painelAtualizarOS" columns="2" cellpadding="5" style="text-align: left;">
+					<p:outputLabel for="status" value="Status:" />
+					<p:selectOneMenu id="status" value="#{ordemServicoController.ordemServico.status}" style="width:276px">
+						<f:selectItem itemLabel="Ativo" itemValue="Ativo" />
+						<f:selectItem itemLabel="Concluído" itemValue="Concluído" />
+						<f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="descricao_problema" value="Descrição do problema:" />
+					<p:inputTextarea id="descricao_problema" value="#{ordemServicoController.ordemServico.descricaoProblema}" cols="30" autoResize="false" required="true" requiredMessage="Preencha o campo de descrição do problema" />
+					
+					<p:outputLabel for="descricao_solucao" value="Descrição da solução:"/>
+					<p:inputTextarea id="descricao_solucao" value="#{ordemServicoController.ordemServico.descricaoSolucao}" cols="30" autoResize="false" required="true" requiredMessage="Preencha o campo de descrição da solução" />
+					
+					<p:outputLabel for="pecas_usadas" value="Peças usadas:" />					
+					<p:selectCheckboxMenu id="pecas_usadas" value="#{ordemServicoController.ordemServico.pecas_usadas}" multiple="true" filter="true" filterMatchMode="startsWith" style="width:276px;">
+						<f:selectItem itemLabel="Nenhuma" itemValue="Nenhuma" />
+						<f:selectItems value="#{ordemServicoController.listarPecas()}" var="peca" itemLabel="#{peca.nome}" itemValue="#{peca.nome}" />
+					</p:selectCheckboxMenu>
+				</h:panelGrid>
+				
+				<p:commandButton value="Atualizar ordem de serviço" actionListener="#{ordemServicoController.atualizarOrdemServico()}" update="formOrdensServicos:listaOrdensServicos" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:decorate>

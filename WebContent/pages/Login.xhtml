@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Como fazer a tela de autenticação: https://www.youtube.com/watch?v=WpaKxSpCqzg&list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z&index=141 por Sérgio Delfino -->
+ 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+	<h:head>
+		<title>Autenticação - Sistema de assistência técnica</title>
+		<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/> <!-- Para poder usas os ícones Primeicons do primefaces -->
+		
+		<style type="text/css">
+			html, body {
+			    height: 100%;
+			}
+			body {
+			    margin: 0; /* This will stop the white margin, setting it to 0 */
+			}
+		</style>
+	</h:head>
+	 
+	<h:body>	 
+		<p:dialog header="Autenticação" visible="true" closable="false" draggable="false" resizable="false" modal="true" style="text-align: center;">
+			<h:form id="formLogin">
+				<h:panelGrid id="painelLogin" columns="2" cellpadding="5" style="text-align: left;">
+					<h:outputLabel for="email" value="Email:" />
+					<p:inputText id="email" type="email" required="true" requiredMessage="Preencha o campo email" value="#{loginController.usuario.email}" />
+					
+					<h:outputLabel for="senha" value="Senha:" />
+					<p:password id="senha" value="#{loginController.usuario.senha}" required="true" requiredMessage="Preencha o campo senha" />
+				</h:panelGrid>
+					<p:commandButton value="Entrar" action="#{loginController.autenticarUsuario()}" />
+					
+					<p:messages id="msgErro" severity="error" closable="true" style="width: 310px;">
+						<p:autoUpdate />
+					</p:messages>
+			</h:form>
+		</p:dialog>
+		
+	</h:body> 
+</html>

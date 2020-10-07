@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Tutorial sobre template: https://youtu.be/oVTn6YucDmM?list=PLi-pH2tKqA2BuyViCIt6QR9Zd9nx8blGf -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Sistema de assistência técnica</title>
+	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/> <!-- Para poder usas os ícones Primeicons do primefaces -->
+	
+	<style type="text/css">
+		html, body {
+		    height: 100%;
+		}
+		body {
+		    margin: 0; /* This will stop the white margin, setting it to 0 */
+		}
+	</style>
+</h:head>
+
+<h:body>
+	<div>
+		<div style="height: 100px; background-color: #dedede">
+			<h:graphicImage library="images" name="banner.png" />
+		</div>
+	</div>
+
+	<p:growl id="growlMessages" severity="info,warn" ><p:autoUpdate /></p:growl>	<!-- Mensagem que pode ser exibida no canto superior direito da página -->
+	
+	<ui:include src="/includes/menuPrincipal.xhtml" />	<!-- Inclui o xhtml do menuPrincipal nessa área do código -->
+	
+	<div style="height: 82vh; background-color: #dedede; padding: 20px 1% 0px;">
+		<ui:insert name="corpo"></ui:insert>	<!-- As páginas que usam desse template poderão por códigos dela nessa área -->
+	</div>
+</h:body>
+
+</html>

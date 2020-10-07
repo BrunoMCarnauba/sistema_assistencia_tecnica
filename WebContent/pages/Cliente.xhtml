@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Tutorial tela de cadastro: https://youtu.be/XkRJvCpjal0?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z e https://youtu.be/iHwaZU2YSbo?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z -->
+<!-- Tutorial tela de listagem: https://youtu.be/6SnOqwWwMQo?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z e https://youtu.be/Q-zSiiulN-g?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z-->
+<!-- Tutorial sobre excluir: https://youtu.be/r8PBIyVsaLc?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z -->
+<!-- Tutorial sobre editar: https://youtu.be/oCyd_V3VXuQ?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z -->
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/templates/templatePrincipal.xhtml"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+
+		<h:outputScript name="viacep.js" library="js" />
+
+		<style type="text/css">
+			.alinhaPanelGrid td {
+				vertical-align: top;
+			}
+		</style>
+
+		<h:form id="formCliente">
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="Lista de clientes" />
+					<p:commandButton value="Adicionar um novo cliente" actionListener="#{clienteController.novoCliente()}" update="formCadastro:painelCadastro" 
+								oncomplete="PF('dialogoCadastro').show();" style="float: right" />
+				</f:facet>
+
+				<p:dataTable id="tabelaClientes" value="#{clienteController.listarClientes()}" var="cliente"
+					emptyMessage="Nenhum registro encontrado." paginator="true" rows="10" style="margin: 5px 0 5px 0">
+					<p:column headerText="CPF" filterBy="#{cliente.cpf}">
+						<h:outputText value="#{cliente.cpf}" />
+					</p:column>
+
+					<p:column headerText="Nome" sortBy="#{cliente.nome}"
+						filterBy="#{cliente.nome}">
+						<h:outputText value="#{cliente.nome}" />
+					</p:column>
+
+					<p:column headerText="Email">
+						<h:outputText value="#{cliente.email}" />
+					</p:column>
+
+					<p:column headerText="Telefone">
+						<h:outputText value="#{cliente.telefone_celular}" rendered="#{not empty cliente.telefone_celular}" />
+						<h:outputText value="#{cliente.telefone_fixo}" rendered="#{empty cliente.telefone_celular}" />
+					</p:column>
+
+					<p:column headerText="Opções">
+						<p:commandButton icon="pi pi-pencil" actionListener="#{clienteController.btnEditar}" update=":formCadastro:painelCadastro" oncomplete="PF('dialogoCadastro').show();">
+							<f:attribute name="clienteSelecionado" value="#{cliente}" />							
+						</p:commandButton>
+
+						<p:commandButton icon="pi pi-trash" actionListener="#{clienteController.deletarCliente}" update=":formCliente:tabelaClientes">
+							<p:confirm header="Confirmação" message="Deseja deletar esse cliente?" icon="pi pi-exclamation-triangle" />
+							<f:attribute name="clienteSelecionado" value="#{cliente}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+				</p:confirmDialog>
+
+				<p:messages id="msgErro" severity="error" closable="true" showDetail="true">
+					<p:autoUpdate />
+				</p:messages>
+
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Cliente - Cadastro" widgetVar="dialogoCadastro" draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painelCadastro" columns="2" cellpadding="5" styleClass="alinhaPanelGrid">
+					<h:panelGroup>
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="nome" value="Nome:" />
+							<p:inputText id="nome" value="#{clienteController.cliente.nome}" required="true" requiredMessage="Preencha o campo nome" />
+
+							<p:outputLabel for="cpf" value="CPF:" />
+							<p:inputMask id="cpf" mask="999.999.999-99" value="#{clienteController.cliente.cpf}" required="true" requiredMessage="Preencha o campo CPF" maxlength="14" />
+
+							<p:outputLabel for="telefoneCelular" value="Telefone celular:" />
+							<p:inputMask id="telefoneCelular" value="#{clienteController.cliente.telefone_celular}" mask="(99) 99999-9999" />
+
+							<p:outputLabel for="telefoneFixo" value="Telefone fixo:" />
+							<p:inputMask id="telefoneFixo" value="#{clienteController.cliente.telefone_fixo}" mask="(99) 9999-9999" />
+
+							<p:outputLabel for="email" value="Email:" />
+							<p:inputText id="email" value="#{clienteController.cliente.email}" type="email" required="true" requiredMessage="Preencha o campo email" />
+						</h:panelGrid>
+					</h:panelGroup>
+
+					<h:panelGroup>
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="cep" value="CEP:" />
+							<p:outputPanel>
+								<p:inputMask id="cep" mask="99999-999" value="#{clienteController.cliente.endereco.cep}"
+									required="true" requiredMessage="Preencha o campo CEP" maxlength="9" 
+									onblur="pesquisacep();" />
+								<!-- <p:commandButton icon="pi pi-search" style="margin-left: 8px;" action="pesquisacep(');" /> -->
+							</p:outputPanel>
+
+							<p:outputLabel for="estado" value="Estado:" />
+							<p:inputText id="estado" value="#{clienteController.cliente.endereco.estado}" />
+
+							<p:outputLabel for="cidade" value="Cidade:" />
+							<p:inputText id="cidade" value="#{clienteController.cliente.endereco.cidade}" />
+
+							<p:outputLabel for="logradouro" value="Logradouro:" />
+							<p:inputText id="logradouro" value="#{clienteController.cliente.endereco.logradouro}" />
+
+							<p:outputLabel for="bairro" value="Bairro:" />
+							<p:inputText id="bairro" value="#{clienteController.cliente.endereco.bairro}" />
+
+							<p:outputLabel for="complemento" value="Complemento:" />
+							<p:inputText id="complemento" value="#{clienteController.cliente.endereco.complemento}" />
+
+							<p:outputLabel for="numeroPropriedade" value="Número da propriedade:" />
+							<p:inputText id="numeroPropriedade" type="number" min="0" value="#{clienteController.cliente.endereco.numero_propriedade}" />
+						</h:panelGrid>
+					</h:panelGroup>
+				</h:panelGrid>
+
+				<p:commandButton icon="pi pi-check" value="Salvar" actionListener="#{clienteController.btnSalvar()}" 
+								update="formCadastro:painelCadastro :formCliente:tabelaClientes" style="margin-top: 8px;" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:decorate>

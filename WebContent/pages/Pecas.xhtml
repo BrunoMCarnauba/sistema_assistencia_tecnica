@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Tutorial - Como fazer o SelectOneMenu: https://www.youtube.com/watch?v=3XGwUTPJ9x8 e https://www.youtube.com/watch?v=_sNP0RyPMtg --> 
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      template="/templates/templatePrincipal.xhtml"> 
+
+	<ui:define name="corpo">
+	
+		<h:form id="formPecas">
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="Lista de peças" />
+					<p:commandButton value="Adicionar nova peça" actionListener="#{pecaController.novaPeca()}" oncomplete="PF('dialogoCadastro').show();" update=":formCadastro:painelCadastro" style="float: right;" /> 
+				</f:facet>
+			
+				<p:dataTable id="listaPecas" value="#{pecaController.listarPecas()}" var="peca" emptyMessage="Nenhum registro encontrado."
+					paginator="true" rows="10" style="margin: 5px 0 5px 0">
+					<p:column headerText="Nome" sortBy="#{peca.nome}" filterBy="#{peca.nome}">
+						<h:outputText value="#{peca.nome}" />
+					</p:column>
+					
+					<p:column headerText="Descrição">
+						<h:outputText value="#{peca.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Tipo da peça" filterBy="#{peca.tipoPeca.nome}">
+						<h:outputText value="#{peca.tipoPeca.nome}" />
+					</p:column>
+					
+					<p:column headerText="Fabricante" sortBy="#{peca.fabricante.nome}" filterBy="#{peca.fabricante.nome}">
+						<h:outputText value="#{peca.fabricante.nome}" />
+					</p:column>
+					
+					<p:column headerText="Preço médio" sortBy="#{peca.preco}">
+						<h:outputText value="R$:#{peca.preco}" />
+					</p:column>
+					
+					<p:column headerText="Opções">
+						<p:commandButton icon="pi pi-pencil" actionListener="#{pecaController.btnEditar}" oncomplete="PF('dialogoCadastro').show();" update=":formCadastro:painelCadastro">
+							<f:attribute name="pecaSelecionada" value="#{peca}"/>
+						</p:commandButton>
+						
+						<p:commandButton icon="pi pi-trash" actionListener="#{pecaController.deletarPeca}" update=":formPecas:listaPecas">
+							<p:confirm header="Confirmação" message="Deseja mesmo deletar essa peça?" icon="pi pi-exclamation-triangle" />
+							<f:attribute name="pecaSelecionada" value="#{peca}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+					
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+						<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+					</p:confirmDialog>
+					
+					<p:messages id="msgErro" severity="error" closable="true" showDetail="true">
+						<p:autoUpdate />
+					</p:messages>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Peças - Cadastro" widgetVar="dialogoCadastro" resizable="false" draggable="false" modal="true" style="text-align: center;">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painelCadastro" columns="2" cellpadding="5" style="text-align: left;">
+					<p:outputLabel for="nome" value="Nome:" />
+					<p:inputText id="nome" value="#{pecaController.peca.nome}" required="true" requiredMessage="Preencha o campo nome." size="28" />
+					
+					<p:outputLabel for="preco" value="Preço médio:" />
+					<p:inputNumber id="preco" value="#{pecaController.peca.preco}" required="true" requiredMessage="Preencha o campo preço." size="28" />
+					
+					<p:outputLabel for="quantidade" value="Quantidade estoque:" />
+					<p:inputText id="quantidade" type="number" min="0" value="#{pecaController.peca.quantidade}" size="28" />
+					
+					<p:outputLabel for="tipo_peca" value="Tipo da peça:" />
+					<p:selectOneMenu id="tipo_peca" value="#{pecaController.peca.tipoPeca.id}" converter="omnifaces.SelectItemsConverter" filter="true" filterMatchMode="startsWith" style="width:276px">
+						<f:selectItem itemLabel="Selecione o tipo de peça" noSelectionOption="true" />
+						<f:selectItems value="#{pecaController.listarTiposPecas()}" var="tipo_peca" itemLabel="#{tipo_peca.nome}" itemValue="#{tipo_peca.id}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="fabricante" value="Fabricante:" />
+					<p:selectOneMenu id="fabricante" value="#{pecaController.peca.fabricante.id}" converter="omnifaces.SelectItemsConverter" filter="true" filterMatchMode="startsWith" style="width:276px">
+						<f:selectItem itemLabel="Selecione o fabricante" noSelectionOption="true" />
+						<f:selectItems value="#{pecaController.listarFabricantes()}" var="fabricante" itemLabel="#{fabricante.nome}" itemValue="#{fabricante.id}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="descricao" value="Descrição:" />
+					<p:inputTextarea id="descricao" value="#{pecaController.peca.descricao}" cols="30" autoResize="false" />
+				</h:panelGrid>
+				
+				<p:commandButton value="Salvar peça" actionListener="#{pecaController.btnSalvar()}" update=":formPecas:listaPecas :formCadastro:painelCadastro" />
+			</h:form>
+		</p:dialog>
+	
+	</ui:define>
+
+</ui:decorate>

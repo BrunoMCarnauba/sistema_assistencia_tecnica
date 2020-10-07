@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Tutorial tela de listagem: https://youtu.be/6SnOqwWwMQo?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z e https://youtu.be/Q-zSiiulN-g?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z-->
+<!-- Tutorial sobre excluir: https://youtu.be/r8PBIyVsaLc?list=PL_GwGUsBlNyfI0W3ggfffhBdJUqB4981Z -->
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/templatePrincipal.xhtml">
+
+	<ui:define name="corpo">
+		<h:form id="formLista">
+			<p:panel id="painelLista" header="Lista de usuários">
+				<p:dataTable id="tabelaUsuarios" var="usuario"
+					value="#{usuarioController.listarUsuarios()}"
+					emptyMessage="Nenhum registro encontrado." paginator="true"
+					rows="10" style="margin: 5px 0 5px 0">
+					<p:column headerText="CPF" filterBy="#{usuario.cpf}">
+						<h:outputText value="#{usuario.cpf}" />
+					</p:column>
+
+					<p:column headerText="Nome" sortBy="#{usuario.nome}"
+						filterBy="#{usuario.nome}">
+						<h:outputText value="#{usuario.nome}" />
+					</p:column>
+
+					<p:column headerText="Email">
+						<h:outputText value="#{usuario.email}" />
+					</p:column>
+
+					<p:column headerText="Telefone">
+						<h:outputText value="#{usuario.telefone_celular}" rendered="#{not empty usuario.telefone_celular}" />
+						<h:outputText value="#{usuario.telefone_fixo}" rendered="#{empty usuario.telefone_celular}" />
+					</p:column>
+
+					<p:column headerText="Opções">
+						<p:commandButton icon="pi pi-pencil" action="#{usuarioController.editarClicado(usuario)}" />
+						
+						<p:commandButton icon="pi pi-trash" actionListener="#{usuarioController.excluirUsuario}" update=":formLista:tabelaUsuarios">
+							<p:confirm header="Confirmação" message="Deseja deletar esse usuário?" icon="pi pi-exclamation-triangle" />
+							<f:attribute name="usuarioSelecionado" value="#{usuario}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+				</p:confirmDialog>
+				
+				<p:messages id="msgErro" severity="error" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+</ui:decorate>

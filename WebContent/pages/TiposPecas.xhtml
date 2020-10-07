@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:p="http://primefaces.org/ui"
+      template="/templates/templatePrincipal.xhtml"> 
+
+	<ui:define name="corpo">
+	
+		<h:form id="formTipoPecas">
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="Lista de tipos de peças" />
+					<p:commandButton value="Adicionar novo tipo de peça" actionListener="#{tipoPecaController.novoTipoPeca()}" oncomplete="PF('dialogoCadastro').show()" update=":formCadastro:painelCadastro" style="float: right;" />
+				</f:facet>
+			
+				<p:dataTable id="listaTipoPecas" value="#{tipoPecaController.listarTiposPecas()}" var="tipoPeca" emptyMessage="Nenhum registro encontrado."
+						paginator="true" rows="10" style="margin: 5px 0 5px 0">
+					<p:column headerText="Nome" sortBy="#{tipoPeca.nome}" filterBy="#{tipoPeca.nome}">
+						<h:outputText value="#{tipoPeca.nome}" />
+					</p:column>
+					
+					<p:column headerText="Descrição">
+						<h:outputText value="#{tipoPeca.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Opções">
+						<p:commandButton icon="pi pi-pencil" actionListener="#{tipoPecaController.btnEditar}" oncomplete="PF('dialogoCadastro').show();" update=":formCadastro:painelCadastro">
+							<f:attribute name="tipoPecaSelecionado" value="#{tipoPeca}" />
+						</p:commandButton>
+						
+						<p:commandButton icon="pi pi-trash" actionListener="#{tipoPecaController.deletarTipoPeca}" update=":formTipoPecas:listaTipoPecas">
+							<p:confirm header="Confirmaçõa" message="Deseja mesmo deletar esse tipo de peça?" icon="pi pi-exclamation-triangle"/>
+							<f:attribute name="tipoPecaSelecionado" value="#{tipoPeca}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+				</p:confirmDialog>
+				
+				<p:messages id="msgErro" severity="error" closable="true" showDetail="true">
+					<p:autoUpdate />
+				</p:messages>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Tipo de peças - Cadastro" widgetVar="dialogoCadastro" closable="true" resizable="false" draggable="false"
+				modal="true" style="text-align: center;">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painelCadastro" column="2" cellpadding="5" style="text-align: left;">
+					<p:outputLabel for="nome" value="Nome:" />
+					<p:inputText id="nome" value="#{tipoPecaController.tipoPeca.nome}" required="true" requiredMessage="Preencha o campo nome." size="28" />
+					
+					<p:outputLabel for="descricao" value="Descrição:" />
+					<p:inputTextarea id="descricao" value="#{tipoPecaController.tipoPeca.descricao}" autoResize="false" rows="5" cols="30" />
+				</h:panelGrid>
+					
+				<p:commandButton value="Salvar tipo de peça" actionListener="#{tipoPecaController.btnSalvar}" update=":formTipoPecas:listaTipoPecas :formCadastro:painelCadastro:" style="margin-top: 8px;" />
+			</h:form>
+		</p:dialog>
+	
+	</ui:define>
+
+</ui:decorate>

@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Tutorial - Como fazer o SelectOneMenu: https://www.youtube.com/watch?v=3XGwUTPJ9x8 e https://www.youtube.com/watch?v=_sNP0RyPMtg -->
+<!--  Conversão de data: http://blog.triadworks.com.br/jsf-conversao-de-datas-e-problemas-com-fuso-horario -->
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/templatePrincipal.xhtml">
+
+	<ui:define name="corpo">
+		<h:outputScript name="viacep.js" library="js" />
+		
+		<style type="text/css">
+			.alinhaPanelGrid td{
+				vertical-align: top;
+			}
+		</style>
+		
+		<h:form id="formCadastro">
+			<p:fieldset legend="Cadastro de usuário">
+				<h:panelGrid columns="2" cellpadding="5" styleClass="alinhaPanelGrid">
+					<h:panelGroup>			
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="nome" value="Nome:" />
+							<p:inputText id="nome" value="#{usuarioController.usuario.nome}" required="true" requiredMessage="Preencha o campo nome" />
+							
+							<p:outputLabel for="cpf" value="CPF:" />
+							<p:inputMask id="cpf" mask="999.999.999-99" value="#{usuarioController.usuario.cpf}" required="true" requiredMessage="Preencha o campo CPF" maxlength="14" />
+							
+					        <p:outputLabel for="dataNascimento" value="Data de nascimento:" />
+					        <p:inputMask id="dataNascimento" value="#{usuarioController.usuario.data_nascimento}" mask="99/99/9999"  required="true" requiredMessage="Preencha a data de nascimento"><f:convertDateTime pattern="dd/mm/yyyy" />
+					        	<f:convertDateTime pattern="dd/MM/yyyy"/>
+					        </p:inputMask>
+					        
+					        <p:outputLabel for="telefoneCelular" value="Telefone celular:" />
+					        <p:inputMask id="telefoneCelular" value="#{usuarioController.usuario.telefone_celular}" mask="(99) 99999-9999"/>
+					        
+					        <p:outputLabel for="telefoneFixo" value="Telefone fixo:" />
+					        <p:inputMask id="telefoneFixo" value="#{usuarioController.usuario.telefone_fixo}" mask="(99) 9999-9999"/>
+					        
+					        <p:outputLabel for="email" value="Email:" />
+					        <p:inputText id="email" value="#{usuarioController.usuario.email}" type="email" required="true" requiredMessage="Preencha o campo email" />
+					        
+							<p:outputLabel for="senha" value="Senha:" />
+        					<p:password id="senha" value="#{usuarioController.usuario.senha}" match="senhaRepetida" feedback="true" required="true" requiredMessage="Preencha o campo senha" />
+        									
+					        <p:outputLabel for="senhaRepetida" value="Repita a senha:" />
+					        <p:password id="senhaRepetida" required="true" />
+							
+				            <p:outputLabel for="cargo" value="Cargo:" />
+				            <p:selectOneMenu id="cargo" value="#{usuarioController.usuario.cargo.id}" converter="omnifaces.SelectItemsConverter">
+				                <f:selectItem itemLabel="Selecione o cargo" noSelectionOption="true" />
+				                <f:selectItems value="#{usuarioController.listarCargos()}" var="cargo" itemValue="#{cargo.id}" itemLabel="#{cargo.nome}" />
+				            </p:selectOneMenu>
+						</h:panelGrid>
+					</h:panelGroup>
+					
+					<h:panelGroup>					
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="cep" value="CEP:" />
+							<p:outputPanel>
+								<p:inputMask id="cep" mask="99999-999" value="#{usuarioController.usuario.endereco.cep}" required="true" requiredMessage="Preencha o campo CEP" maxlength="9" onblur="pesquisacep();"/>
+								<!-- <p:commandButton icon="pi pi-search" style="margin-left: 8px;" action="pesquisacep('57051-000');" /> -->
+							</p:outputPanel>
+							
+							<p:outputLabel for="estado" value="Estado:" />
+							<p:inputText id="estado" value="#{usuarioController.usuario.endereco.estado}" />
+							
+					        <p:outputLabel for="cidade" value="Cidade:" />
+					        <p:inputText id="cidade" value="#{usuarioController.usuario.endereco.cidade}" />
+					        
+					        <p:outputLabel for="logradouro" value="Logradouro:" />
+					        <p:inputText id="logradouro" value="#{usuarioController.usuario.endereco.logradouro}" />
+					        
+					        <p:outputLabel for="bairro" value="Bairro:" />
+					        <p:inputText id="bairro" value="#{usuarioController.usuario.endereco.bairro}" />
+					        
+					        <p:outputLabel for="complemento" value="Complemento:" />
+					        <p:inputText id="complemento" value="#{usuarioController.usuario.endereco.complemento}" />
+					        
+							<p:outputLabel for="numeroPropriedade" value="Número da propriedade:" />
+							<p:inputText id="numeroPropriedade" type="number" min="0" value="#{usuarioController.usuario.endereco.numero_propriedade}" />
+						</h:panelGrid>
+					</h:panelGroup>
+				</h:panelGrid>
+				
+				<p:messages id="msgErro" severity="error" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				
+				<p:commandButton value="Cadastrar" icon="pi pi-check" style="margin-top: 8px;" action="#{usuarioController.cadastrarUsuario()}"/>
+			</p:fieldset>
+		</h:form>
+		
+	</ui:define>
+
+</ui:decorate>
